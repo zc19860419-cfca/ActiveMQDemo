@@ -22,7 +22,8 @@ public class Consumer {
     }
 
     public void testMQConsumerQueue() throws Exception {
-        Connection connection = ConnectionHelper.createConnection();
+        String brokerURL = "https://192.168.184.134:9088?transport.verifyHostName=false";
+        Connection connection = ConnectionHelper.createConnection(brokerURL);
         //4、使用连接对象创建会话（session）对象
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         //5、使用会话对象创建目标对象，包含queue和topic（一对一和一对多）

@@ -29,13 +29,13 @@ public class ConnectionHelper {
 
     private static final Provider cfcaTLS = new JSSEProvider();
 
-    public static Connection createConnection() throws Exception {
+    public static Connection createConnection(String brokerURL) throws Exception {
         //1、创建工厂连接对象，需要制定ip和端口号
 
 //        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://192.168.166.24:61616");
 //        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("https://127.0.0.1:9088");
 //        ActiveMQSslConnectionFactory connectionFactory = new ActiveMQSslConnectionFactory("https://127.0.0.1:9088");
-        ActiveMQSslConnectionFactory connectionFactory = new ActiveMQSslConnectionFactory("https://192.168.184.134:9088?transport.verifyHostName=false");
+        ActiveMQSslConnectionFactory connectionFactory = new ActiveMQSslConnectionFactory(brokerURL);
         final String password = "cfca1234";
         final String keystoreType = "JKS";
         final String algorithm = "SunX509";
@@ -55,11 +55,11 @@ public class ConnectionHelper {
     }
 
 
-    public static Connection createSM2Connection() throws Exception {
+    public static Connection createSM2Connection(String brokerUrl) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         Security.addProvider(new JSSEProvider());
         //1、创建工厂连接对象，需要制定ip和端口号
-        CustomActiveMQSslConnectionFactory connectionFactory = new CustomActiveMQSslConnectionFactory("https://127.0.0.1:9088?transport.verifyHostName=false");
+        CustomActiveMQSslConnectionFactory connectionFactory = new CustomActiveMQSslConnectionFactory(brokerUrl);
         final String keyStoreType = "BKS";
         final String algorithm = "GMTX509";
         final String keyStoreFile = "TestData/gateway/SM2ClientYang-cfca1234.keystore";

@@ -26,7 +26,7 @@ import java.security.Security;
 /**
  * Hello world!
  */
-public class BrokerNewDemo {
+public class BrokerWithSM2TransportServer {
     private final Provider cfcaTLS = new JSSEProvider();
 
     static {
@@ -35,7 +35,7 @@ public class BrokerNewDemo {
     }
 
     public static void main(String[] args)  throws Exception{
-        final BrokerNewDemo broker = new BrokerNewDemo();
+        final BrokerWithSM2TransportServer broker = new BrokerWithSM2TransportServer();
         broker.run();
     }
 
@@ -50,11 +50,13 @@ public class BrokerNewDemo {
             //是否使用持久化
             broker.setPersistent(false);
 
-            SslContext sslContext = initSM2SslContext();
+            SslContext sslContext = buildSM2SslContext();
             broker.setSslContext(sslContext);
             //添加连接协议，地址
+			//SM2SslTransportFactory transportFactory = new SM2SslTransportFactory(broker);
             SslTransportFactory transportFactory = new SslTransportFactory();
-            SslTransportServer server = (SslTransportServer)transportFactory.doBind(new URI("https://127.0.0.1:9088"));
+            final String location = "https://192.168.184.134:9088?transport.verifyHostName=false";
+            SslTransportServer server = (SslTransportServer)transportFactory.doBind(new URI(location));
             server.setNeedClientAuth(true);
 
             broker.addConnector(server);
@@ -79,7 +81,7 @@ public class BrokerNewDemo {
         return new SslContext(keyManagers, trustManagers, random);
     }
 
-    private SslContext initSM2SslContext() throws Exception {
+    private SslContext buildSM2SslContext() throws Exception {
 
         final String keyStoreType = "BKS";
         final String algorithm = "GMTX509";

@@ -21,7 +21,9 @@ import java.security.SecureRandom;
 import java.security.Security;
 
 /**
- * Hello world!
+ * @author zhangchong
+ * @CodeReviewer zhangqingan
+ * @Description
  */
 public class BrokerDemo {
     private final Provider cfcaTLS = new JSSEProvider();
@@ -47,10 +49,11 @@ public class BrokerDemo {
             //是否使用持久化
             broker.setPersistent(false);
 
-            SslContext sslContext = initSM2SslContext();
+//            SslContext sslContext = initSM2SslContext();
+            SslContext sslContext = initSslContext();
             broker.setSslContext(sslContext);
             //添加连接协议，地址
-            broker.addConnector("https://127.0.0.1:9088");
+            broker.addConnector("https://192.168.184.134:9088?transport.verifyHostName=false");
             broker.start();
         } finally {
             IOUtils.closeQuietly(keystore);
@@ -74,10 +77,12 @@ public class BrokerDemo {
 
     private SslContext initSM2SslContext() throws Exception {
 
-        final String keyStorePass = "cfca1234";
         final String keyStoreType = "BKS";
         final String algorithm = "GMTX509";
-        final String keyStoreFile = "TestData/sm2/tserver.keystore";
+        final String keyStoreFile = "TestData/gateway/SM2ClientYang-cfca1234.keystore";
+        final String keyStorePass = "cfca1234";
+        final String trustStoreFile = "TestData/gateway/SM2TrustYang_11111111.keystore";
+        final String trustStorePass = "11111111";
         final String protocol = "GMTLSv1.1";
 
         FileInputStream fis = null;
@@ -89,15 +94,11 @@ public class BrokerDemo {
             factory.init(keyStore, keyStorePass.toCharArray());
             final KeyManager[] keyManagers = factory.getKeyManagers();
 
-            TrustManager[] trustManagers = null;
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm, cfcaTLS);
-
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(algorithm, cfcaTLS);
             KeyStore tks = KeyStore.getInstance(keyStoreType);
-            tks.load(new FileInputStream(keyStoreFile), keyStorePass.toCharArray());
-
-            tmf.init(tks);
-
-            trustManagers = tmf.getTrustManagers();
+            tks.load(new FileInputStream(trustStoreFile), trustStorePass.toCharArray());
+            trustManagerFactory.init(tks);
+            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
 
             SecureRandom random = new SecureRandom();
             final SslContext sslContext = new SslContext(keyManagers, trustManagers, random);

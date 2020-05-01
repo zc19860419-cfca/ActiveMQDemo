@@ -25,7 +25,10 @@ public class Producer {
     }
 
     void produce() throws Exception {
-        final Connection connection = ConnectionHelper.createConnection();
+
+        String brokerUrl = "https://192.168.184.134:9088?transport.verifyHostName=false";
+//        final Connection connection = ConnectionHelper.createSM2Connection(brokerUrl);
+        final Connection connection = ConnectionHelper.createConnection(brokerUrl);
         //4、使用连接对象创建会话（session）对象
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         //5、使用会话对象创建目标对象，包含queue和topic（一对一和一对多）
